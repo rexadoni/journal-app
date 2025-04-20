@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Journal App</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { font-family: Arial; padding: 20px; text-align: center; background: #f0f0f0; }
+        textarea { width: 90%; height: 100px; margin-top: 20px; }
+        button { padding: 10px; margin: 10px; background: green; color: white; border: none; border-radius: 5px; }
+        #journal-list { margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <h1>Daily Journal</h1>
+    <textarea id="entry" placeholder="Write your thoughts..."></textarea><br>
+    <button onclick="submit()">Save</button>
+    <button onclick="clearEntry()">Clear</button>
+
+    <div id="journal-list"></div>
+
+    <script>
+        function submit() {
+            let text = document.getElementById("entry").value;
+            if (text) {
+                let entries = JSON.parse(localStorage.getItem("entries")) || [];
+                entries.push(text);
+                localStorage.setItem("entries", JSON.stringify(entries));
+                document.getElementById("entry").value = "";
+                showEntries();
+            }
+        }
+
+        function clearEntry() {
+            document.getElementById("entry").value = "";
+        }
+
+        function showEntries() {
+            let entries = JSON.parse(localStorage.getItem("entries")) || [];
+            let html = "<h3>Previous Entries:</h3><ul>";
+            entries.forEach(entry => {
+                html += `<li>${entry}</li>`;
+            });
+            html += "</ul>";
+            document.getElementById("journal-list").innerHTML = html;
+        }
+
+        showEntries();
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
+    </script>
+</body>
+</html>
